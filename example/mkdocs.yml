@@ -1,0 +1,16 @@
+site_name: test_mkdocs_drawio_file
+docs_dir: docs
+edit_uri: blob/master/example/
+
+nav:
+  - test: 'index.md'
+  
+
+theme:
+  name: material
+    
+plugins:
+    - search
+    - drawio_file
+    
+repo_url: https://github.com/onixpro/mkdocs-drawio-file
