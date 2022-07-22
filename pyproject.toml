@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "mkdocs-drawio-file"
+version = "1.0.0"
+description = "Mkdocs plugin that renders .drawio files"
+authors = ["Sergey Lukin <onixpro@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/onixpro/mkdocs-drawio-file/"
+homepage = "https://github.com/onixpro/mkdocs-drawio-file/"
+keywords = [
+    "mkdocs", "plugin", "markdown", "drawio"
+]
+packages = [
+    { include = "mkdocs_drawio_file/plugin.py" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.6.2"
+requests = "^2.27.1"
+Jinja2 = "^3.0.3"
+
+
+[tool.poetry.dev-dependencies]
+black = "^22.1.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.plugins."mkdocs.plugins"]
+external-markdown = 'mkdocs_drawio_file:DiagramsDrawioFile'
