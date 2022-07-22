@@ -15,6 +15,7 @@ With the plugin configured, you can now proceed to embed images by simply embedd
 ![My alt text](my-diagram.drawio)
 ```
 
+
 ## Dependencies
 
 ## Setup
