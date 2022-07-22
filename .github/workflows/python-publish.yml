@@ -9,8 +9,12 @@
 name: Deploy
 
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/python-publish.yml"
+      - "setup.py"
 
 permissions:
   contents: read
