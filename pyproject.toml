@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mkdocs-drawio-file"
-version = "1.0.0"
+version = "1.1.0"
 description = "Mkdocs plugin that renders .drawio files"
 authors = ["Sergey Lukin <onixpro@gmail.com>"]
 license = "MIT"
@@ -28,4 +28,4 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.plugins."mkdocs.plugins"]
-drawio_file = 'mkdocs_drawio_file:DiagramsDrawioFile'
+drawio_file = 'mkdocs_drawio_file.plugin:drawio_file_plugin'

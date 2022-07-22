@@ -8,7 +8,7 @@ def read(name):
 
 setuptools.setup(
     name="mkdocs-drawio-file",
-    version="1.0.0",
+    version="1.1.0",
     packages=find_packages(),
     url="https://github.com/onixpro/mkdocs-drawio-file",
     license="MIT",
@@ -18,7 +18,7 @@ setuptools.setup(
     long_description=read("README.md"),
     long_description_content_type="text/markdown",
     install_requires=["mkdocs"],
-    entry_points={"mkdocs.plugins": ["drawio_file = mkdocs_drawio_file:DiagramsDrawioFile",]},
+    entry_points={"mkdocs.plugins": ["drawio_file = mkdocs_drawio_file:drawio_file_plugin",]},
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: MIT License",
