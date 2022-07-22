@@ -4,10 +4,10 @@ import logging
 import mkdocs
 import mkdocs.plugins
 from mkdocs.structure.files import File
+from mkdocs.structure.files import get_file
 import re
 import string
 
-from mkdocs.structure.files import get_files
 
 # This global is a hack to keep track of the last time the plugin rendered diagrams.
 # A global is required because plugins are reinitialized each time a change is detected.
@@ -16,7 +16,7 @@ last_run_timestamp = 0
     
 
     
-class DiagramsDrawioFile(mkdocs.plugins.BasePlugin):
+class drawio_file_plugin(mkdocs.plugins.BasePlugin):
     config_scheme = (
         (
             "file_extension",
@@ -46,20 +46,20 @@ class DiagramsDrawioFile(mkdocs.plugins.BasePlugin):
 
         drawio_text = ''.join([ item.strip() for item in q_lines])
 
-        drawio_text_ecaped = DiagramsDrawioFile.escape(drawio_text)
+        drawio_text_ecaped = drawio_file_plugin.escape(drawio_text)
 
-        drawio_html = DiagramsDrawioFile.TEMPLATE.substitute(xml_drawio = drawio_text_ecaped )
+        drawio_html = drawio_file_plugin.TEMPLATE.substitute(xml_drawio = drawio_text_ecaped )
         return drawio_html
 
     def convert_match(match,config):
         file_tag = match.group()
         file_name = file_tag[file_tag.find("(")+1:file_tag.find(")")]
-        converted = DiagramsDrawioFile.conver_file(os.path.join(config['docs_dir'],file_name ))
+        converted = drawio_file_plugin.conver_file(os.path.join(config['docs_dir'],file_name ))
         return converted 
 
     def on_page_markdown(self, markdown, page,files,config) -> str:
         def file_sub(match):
-            return DiagramsDrawioFile.convert_match(match,config)
+            return drawio_file_plugin.convert_match(match,config)
 
         pattern = re.compile(r'!\[(.*?)\]\((.*?.drawio)\)', flags=re.IGNORECASE)
         
