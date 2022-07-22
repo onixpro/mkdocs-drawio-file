@@ -4,7 +4,7 @@ import logging
 import mkdocs
 import mkdocs.plugins
 from mkdocs.structure.files import File
-from mkdocs.structure.files import get_file
+from mkdocs.structure.files import get_files
 import re
 import string
 
