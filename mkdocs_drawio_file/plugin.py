@@ -51,15 +51,15 @@ class drawio_file_plugin(mkdocs.plugins.BasePlugin):
         drawio_html = drawio_file_plugin.TEMPLATE.substitute(xml_drawio = drawio_text_ecaped )
         return drawio_html
 
-    def convert_match(match,config):
+    def convert_match(match,config,path):
         file_tag = match.group()
         file_name = file_tag[file_tag.find("(")+1:file_tag.find(")")]
-        converted = drawio_file_plugin.conver_file(os.path.join(config['docs_dir'],file_name ))
+        converted = drawio_file_plugin.conver_file(os.path.join(path,file_name ))
         return converted 
 
     def on_page_markdown(self, markdown, page,files,config) -> str:
         def file_sub(match):
-            return drawio_file_plugin.convert_match(match,config)
+            return drawio_file_plugin.convert_match(match,config,os.path.dirname(page.file.abs_src_path))
 
         pattern = re.compile(r'!\[(.*?)\]\((.*?.drawio)\)', flags=re.IGNORECASE)
         

@@ -4,6 +4,7 @@ edit_uri: blob/master/example/
 
 nav:
   - test: 'index.md'
+  - test2: 'test/test2.md'
   
 
 theme:
