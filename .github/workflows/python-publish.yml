@@ -15,6 +15,7 @@ on:
     paths:
       - ".github/workflows/python-publish.yml"
       - "setup.py"
+      - "mkdocs_drawio_file/plugin.py"
 
 permissions:
   contents: read
