@@ -9,6 +9,12 @@
 
 ## Features
 
+With the plugin configured, you can now proceed to embed images by simply embedding the `*.drawio` diagram file as you would with any image file:
+
+```markdown
+![My alt text](my-diagram.drawio)
+```
+
 ## Dependencies
 
 ## Setup
