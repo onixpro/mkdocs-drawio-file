@@ -3,6 +3,7 @@ import re
 import string
 import logging
 import mkdocs
+from bs4 import BeautifulSoup
 from mkdocs.plugins import BasePlugin
 
 
@@ -39,7 +40,9 @@ class DrawioFilePlugin(BasePlugin):
         str_xml = str_xml.replace("'", "&apos;")
         return str_xml
 
-    def substitute_file(self, file_name: str):
+    def substitute_image(self, path, src: str):
+        file_name = os.path.join(path, src)
+
         with open(file_name, 'r') as q_data:
             q_lines = q_data.readlines()
 
@@ -48,16 +51,26 @@ class DrawioFilePlugin(BasePlugin):
 
         return SUB_TEMPLATE.substitute(xml_drawio=drawio_text_ecaped)
 
-    def substitute_files(self, match, path):
-        file_tag = match.group()
-        file_name = file_tag[file_tag.find("(")+1:file_tag.find(")")]
+    def on_post_page(self, output_content, config, page, **kwargs):
+        if ".drawio" not in output_content.lower():
+            # Skip unecessary HTML parsing
+            return output_content
 
-        return self.substitute_file(os.path.join(path, file_name))
+        soup = BeautifulSoup(output_content, 'html.parser')
 
-    def on_page_markdown(self, markdown, page, files, config) -> str:
-        def substitution(match):
-            return self.substitute_files(match, os.path.dirname(page.file.abs_src_path))
+        # search for images using drawio extension
+        diagrams = soup.findAll('img', src=re.compile('.*\.drawio', re.IGNORECASE))
+        if len(diagrams) == 0:
+            return output_content
 
-        pattern = re.compile(RE_PATTERN, flags=re.IGNORECASE)
+        # add drawio library to body
+        lib = soup.new_tag("script", src="https://viewer.diagrams.net/js/viewer-static.min.js")
+        soup.body.append(lib)
 
-        return pattern.sub(substitution, markdown) + "<script type=\"text/javascript\" src=\"https://viewer.diagrams.net/js/viewer-static.min.js\"></script>"
+        # substitute images with embedded drawio diagram
+        path = os.path.dirname(page.file.abs_src_path)
+
+        for diagram in diagrams:
+            diagram.replace_with(BeautifulSoup(self.substitute_image(path, diagram['src']), 'html.parser'))
+
+        return str(soup)
