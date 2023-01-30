@@ -41,6 +41,9 @@ class DrawioFilePlugin(BasePlugin):
         return str_xml
 
     def substitute_image(self, path, src: str):
+        if src.startswith("../"):
+            src = src[3:]
+
         file_name = os.path.join(path, src)
 
         with open(file_name, 'r') as q_data:
