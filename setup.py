@@ -1,12 +1,13 @@
 from setuptools import setup, find_packages
 import os.path
 
+
 def read(name):
     mydir = os.path.abspath(os.path.dirname(__file__))
     return open(os.path.join(mydir, name)).read()
 
 
-setuptools.setup(
+setup(
     name="mkdocs-drawio-file",
     version="1.3.0",
     packages=find_packages(),
@@ -18,7 +19,8 @@ setuptools.setup(
     long_description=read("README.md"),
     long_description_content_type="text/markdown",
     install_requires=["mkdocs"],
-    entry_points={"mkdocs.plugins": ["drawio_file = mkdocs_drawio_file:drawio_file_plugin",]},
+    entry_points={"mkdocs.plugins": [
+        "drawio_file = mkdocs_drawio_file:DrawioFilePlugin",]},
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: MIT License",
