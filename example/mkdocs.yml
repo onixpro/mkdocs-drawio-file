@@ -6,10 +6,6 @@ nav:
   - test: 'index.md'
   - test2: 'test/test2.md'
   
-
-theme:
-  name: material
-    
 plugins:
     - search
     - drawio_file

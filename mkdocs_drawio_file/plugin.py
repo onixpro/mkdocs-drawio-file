@@ -1,22 +1,26 @@
-
 import os
-import logging
-import mkdocs
-import mkdocs.plugins
-from mkdocs.structure.files import File
-from mkdocs.structure.files import get_files
 import re
 import string
+import logging
+import mkdocs
+from bs4 import BeautifulSoup
+from mkdocs.plugins import BasePlugin
 
 
-# This global is a hack to keep track of the last time the plugin rendered diagrams.
-# A global is required because plugins are reinitialized each time a change is detected.
-last_run_timestamp = 0
+# ------------------------
+# Constants and utilities
+# ------------------------
+RE_PATTERN = r'!\[(.*?)\]\((.*?.drawio)\)'
+SUB_TEMPLATE = string.Template(
+        "<div class=\"mxgraph\" style=\"max-width:100%;border:1px solid transparent;\" data-mxgraph=\"{&quot;highlight&quot;:&quot;#0000ff&quot;,&quot;nav&quot;:true,&quot;resize&quot;:true,&quot;toolbar&quot;:&quot;zoom layers tags lightbox&quot;,&quot;edit&quot;:&quot;_blank&quot;,&quot;xml&quot;:&quot;$xml_drawio&quot;}\"></div>")
 
-    
-
-    
-class drawio_file_plugin(mkdocs.plugins.BasePlugin):
+# ------------------------
+# Plugin
+# ------------------------
+class DrawioFilePlugin(BasePlugin):
+    """
+    Plugin for embedding DrawIO Diagrams into your Docs
+    """
     config_scheme = (
         (
             "file_extension",
@@ -24,15 +28,11 @@ class drawio_file_plugin(mkdocs.plugins.BasePlugin):
         ),
     )
 
-    TEMPLATE = string.Template("<div class=\"mxgraph\" style=\"max-width:100%;border:1px solid transparent;\" data-mxgraph=\"{&quot;highlight&quot;:&quot;#0000ff&quot;,&quot;nav&quot;:true,&quot;resize&quot;:true,&quot;toolbar&quot;:&quot;zoom layers tags lightbox&quot;,&quot;edit&quot;:&quot;_blank&quot;,&quot;xml&quot;:&quot;$xml_drawio&quot;}\"></div>")
-
     def __init__(self):
         self.log = logging.getLogger("mkdocs.plugins.diagrams")
         self.pool = None
 
-
-
-    def escape( str_xml: str ):
+    def escape(self, str_xml: str):
         str_xml = str_xml.replace("&", "&amp;")
         str_xml = str_xml.replace("<", "&lt;")
         str_xml = str_xml.replace(">", "&gt;")
@@ -40,29 +40,40 @@ class drawio_file_plugin(mkdocs.plugins.BasePlugin):
         str_xml = str_xml.replace("'", "&apos;")
         return str_xml
 
-    def conver_file( file_name: str):
+    def substitute_image(self, path, src: str):
+        if src.startswith("../"):
+            src = src[3:]
+
+        file_name = os.path.join(path, src)
+
         with open(file_name, 'r') as q_data:
             q_lines = q_data.readlines()
 
-        drawio_text = ''.join([ item.strip() for item in q_lines])
+        drawio_text = ''.join([item.strip() for item in q_lines])
+        drawio_text_ecaped = self.escape(drawio_text)
 
-        drawio_text_ecaped = drawio_file_plugin.escape(drawio_text)
+        return SUB_TEMPLATE.substitute(xml_drawio=drawio_text_ecaped)
 
-        drawio_html = drawio_file_plugin.TEMPLATE.substitute(xml_drawio = drawio_text_ecaped )
-        return drawio_html
+    def on_post_page(self, output_content, config, page, **kwargs):
+        if ".drawio" not in output_content.lower():
+            # Skip unecessary HTML parsing
+            return output_content
 
-    def convert_match(match,config,path):
-        file_tag = match.group()
-        file_name = file_tag[file_tag.find("(")+1:file_tag.find(")")]
-        converted = drawio_file_plugin.conver_file(os.path.join(path,file_name ))
-        return converted 
+        soup = BeautifulSoup(output_content, 'html.parser')
 
-    def on_page_markdown(self, markdown, page,files,config) -> str:
-        def file_sub(match):
-            return drawio_file_plugin.convert_match(match,config,os.path.dirname(page.file.abs_src_path))
+        # search for images using drawio extension
+        diagrams = soup.findAll('img', src=re.compile('.*\.drawio', re.IGNORECASE))
+        if len(diagrams) == 0:
+            return output_content
 
-        pattern = re.compile(r'!\[(.*?)\]\((.*?.drawio)\)', flags=re.IGNORECASE)
-        
-        markdown = pattern.sub( file_sub, markdown)    
-        markdown = markdown + "<script type=\"text/javascript\" src=\"https://viewer.diagrams.net/js/viewer-static.min.js\"></script>"
-        return markdown
+        # add drawio library to body
+        lib = soup.new_tag("script", src="https://viewer.diagrams.net/js/viewer-static.min.js")
+        soup.body.append(lib)
+
+        # substitute images with embedded drawio diagram
+        path = os.path.dirname(page.file.abs_src_path)
+
+        for diagram in diagrams:
+            diagram.replace_with(BeautifulSoup(self.substitute_image(path, diagram['src']), 'html.parser'))
+
+        return str(soup)
