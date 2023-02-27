@@ -9,7 +9,7 @@ def read(name):
 
 setup(
     name="mkdocs-drawio-file",
-    version="1.5.1",
+    version="1.5.2",
     packages=find_packages(),
     url="https://github.com/onixpro/mkdocs-drawio-file",
     license="MIT",
