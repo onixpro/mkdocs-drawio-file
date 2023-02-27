@@ -15,7 +15,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6.2"
+python = "^3.7.0"
 requests = "^2.27.1"
 Jinja2 = "^3.0.3"
 beautifulsoup4 = "^4.11.0"
