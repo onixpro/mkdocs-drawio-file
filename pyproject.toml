@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mkdocs-drawio-file"
-version = "1.5.0"
+version = "1.5.1"
 description = "Mkdocs plugin that renders .drawio files"
 authors = ["Sergey Lukin <onixpro@gmail.com>"]
 license = "MIT"
@@ -18,6 +18,9 @@ packages = [
 python = "^3.6.2"
 requests = "^2.27.1"
 Jinja2 = "^3.0.3"
+beautifulsoup4 = "^4.11.0"
+lxml = "^4.9.0"
+mkdocs = "^1.4.0"
 
 
 [tool.poetry.dev-dependencies]
