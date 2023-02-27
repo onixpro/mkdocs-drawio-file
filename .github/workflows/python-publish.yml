@@ -14,8 +14,7 @@ on:
       - main
     paths:
       - ".github/workflows/python-publish.yml"
-      - "setup.py"
-      - "mkdocs_drawio_file/plugin.py"
+      - "pyproject.toml"
 
 permissions:
   contents: read
