@@ -62,7 +62,7 @@ class DrawioFilePlugin(BasePlugin):
         soup = BeautifulSoup(output_content, 'html.parser')
 
         # search for images using drawio extension
-        diagrams = soup.findAll('img', src=re.compile('.*\.drawio', re.IGNORECASE))
+        diagrams = soup.findAll('img', src=re.compile(r'.*\.drawio', re.IGNORECASE))
         if len(diagrams) == 0:
             return output_content
 
