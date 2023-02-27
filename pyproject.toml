@@ -22,7 +22,6 @@ beautifulsoup4 = "^4.11.0"
 lxml = "^4.9.0"
 mkdocs = "^1.4.0"
 
-
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"
 
