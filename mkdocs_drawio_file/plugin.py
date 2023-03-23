@@ -11,9 +11,8 @@ from mkdocs.plugins import BasePlugin
 # ------------------------
 # Constants and utilities
 # ------------------------
-RE_PATTERN = r'!\[(.*?)\]\((.*?.drawio)\)'
 SUB_TEMPLATE = string.Template(
-        "<div class=\"mxgraph\" style=\"max-width:100%;border:1px solid transparent;\" data-mxgraph=\"{&quot;highlight&quot;:&quot;#0000ff&quot;,&quot;nav&quot;:true,&quot;resize&quot;:true,&quot;toolbar&quot;:&quot;zoom layers tags lightbox&quot;,&quot;edit&quot;:&quot;_blank&quot;,&quot;xml&quot;:&quot;$xml_drawio&quot;}\"></div>")
+    "<div class=\"mxgraph\" style=\"max-width:100%;border:1px solid transparent;\" data-mxgraph=\"{&quot;highlight&quot;:&quot;#0000ff&quot;,&quot;nav&quot;:true,&quot;resize&quot;:true,&quot;toolbar&quot;:&quot;zoom layers tags lightbox&quot;,&quot;edit&quot;:&quot;_blank&quot;,&quot;xml&quot;:&quot;$xml_drawio&quot;}\"></div>")
 
 # ------------------------
 # Plugin
@@ -41,7 +40,7 @@ class DrawioFilePlugin(BasePlugin):
         soup = BeautifulSoup(output_content, 'html.parser')
 
         # search for images using drawio extension
-        diagrams = soup.findAll('img', src=re.compile(r'.*\.drawio', re.IGNORECASE))
+        diagrams = soup.findAll('img', src=re.compile(r'.*\.drawio$', re.IGNORECASE))
         if len(diagrams) == 0:
             return output_content
 
@@ -66,7 +65,7 @@ class DrawioFilePlugin(BasePlugin):
         escaped_xml = self.escape_diagram(diagram)
 
         return SUB_TEMPLATE.substitute(xml_drawio=escaped_xml)
-    
+
     def parse_diagram(self, data, alt):
         if alt == None:
             return etree.tostring(data, encoding=str)
@@ -87,7 +86,7 @@ class DrawioFilePlugin(BasePlugin):
                 print(f"Warning: Found {len(page)} results for page name '{alt}'")
         except e:
             print(f"Error: Could not properly parse page name: '{alt}'")
-        
+
         return etree.tostring(mxfile, encoding=str)
 
     def escape_diagram(self, str_xml: str):
