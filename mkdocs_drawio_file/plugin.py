@@ -26,6 +26,12 @@ class DrawioFilePlugin(BasePlugin):
         (
             "file_extension",
             mkdocs.config.config_options.Type(str, default=".drawio"),
+        ),        
+        (
+            "drawio_url",
+            mkdocs.config.config_options.Type(
+                str, default="https://viewer.diagrams.net"
+            ),
         ),
     )
 
@@ -46,7 +52,8 @@ class DrawioFilePlugin(BasePlugin):
             return output_content
 
         # add drawio library to body
-        lib = soup.new_tag("script", src="https://viewer.diagrams.net/js/viewer-static.min.js")
+        drawio_url = str(self.config["drawio_url"]).rstrip("/")
+        lib = soup.new_tag("script", src=f"{drawio_url}/js/viewer-static.min.js")
         soup.body.append(lib)
 
         # substitute images with embedded drawio diagram
