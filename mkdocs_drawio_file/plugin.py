@@ -50,7 +50,7 @@ class DrawioFilePlugin(BasePlugin):
         soup.body.append(lib)
 
         # substitute images with embedded drawio diagram
-        path = os.path.dirname(page.file.abs_src_path)
+        path = os.path.dirname(page.file.abs_dest_path)
 
         for diagram in diagrams:
             diagram.replace_with(BeautifulSoup(self.substitute_image(path, diagram['src'], diagram['alt']), 'html.parser'))
@@ -58,10 +58,7 @@ class DrawioFilePlugin(BasePlugin):
         return str(soup)
 
     def substitute_image(self, path: str, src: str, alt: str):
-        if src.startswith("../"):
-            src = src[3:]
-
-        diagram_xml = etree.parse(os.path.join(path, src))
+        diagram_xml = etree.parse(os.path.normpath(os.path.join(path, src)))
         diagram = self.parse_diagram(diagram_xml, alt)
         escaped_xml = self.escape_diagram(diagram)
 
